@@ -17,8 +17,11 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Extract source ZIP
         run: |
-          ZIP_FILE=$(find . -maxdepth 1 -type f -iname '*cloud*build*kit*.zip' | head -n 1)
-          if [ -z "$ZIP_FILE" ]; then echo "Cloud Build ZIP not found"; exit 1; fi
+          ZIP_FILE="./ScriptSeVideo-Free-CloudBuild-Kit.zip"
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "Cloud Build ZIP not found"
+            exit 1
+          fi
           unzip -o "$ZIP_FILE" -d .
       - name: Build APK
         run: gradle -p ScriptSeVideo-Free :app:assembleDebug
