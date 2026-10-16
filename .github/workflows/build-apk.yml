@@ -17,7 +17,7 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Extract source ZIP
         run: |
-          ZIP_FILE="./ScriptSeVideo-Free-CloudBuild-Kit.zip"
+          ZIP_FILE="./ScriptSeVideo-Free-CloudBuild-Kit (1).zip"
           if [ ! -f "$ZIP_FILE" ]; then
             echo "Cloud Build ZIP not found"
             exit 1
