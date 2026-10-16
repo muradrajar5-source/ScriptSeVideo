@@ -1,20 +1,28 @@
+
+
 name: Build ScriptSeVideo APK
 on: [push, workflow_dispatch]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
+
       - uses: android-actions/setup-android@v4
+
       - name: Install Android SDK
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
       - name: Extract source ZIP
         run: |
           ZIP_FILE="./ScriptSeVideo-Free-CloudBuild-Kit (1).zip"
@@ -23,9 +31,23 @@ jobs:
             exit 1
           fi
           unzip -o "$ZIP_FILE" -d .
+          echo "Searching for Gradle settings:"
+          find . -name settings.gradle -print
+          find . -name settings.gradle.kts -print
+
       - name: Build APK
-        run: gradle -p ScriptSeVideo-Free :app:assembleDebug
+        run: |
+          PROJECT_DIR=$(dirname "$(find . -name settings.gradle -print -quit)")
+          if [ -z "$PROJECT_DIR" ]; then
+            PROJECT_DIR=$(dirname "$(find . -name settings.gradle.kts -print -quit)")
+          fi
+          if [ -z "$PROJECT_DIR" ] || [ "$PROJECT_DIR" = "." ]; then
+            PROJECT_DIR="."
+          fi
+          echo "Gradle project directory: $PROJECT_DIR"
+          gradle -p "$PROJECT_DIR" :app:assembleDebug
+
       - uses: actions/upload-artifact@v4
         with:
           name: ScriptSeVideo-APK
-          path: ScriptSeVideo-Free/app/build/outputs/apk/debug/app-debug.apk
+          path: '**/app/build/outputs/apk/debug/app-debug.apk'
